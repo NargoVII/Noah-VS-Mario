@@ -955,7 +955,7 @@ function resetG2(){
     enemies:[],
     runes:[],
     cities:CITIES.map(c=>({...c,visited:false})),
-    boss:{x:4200,y:V2H/2,vx:1.4,vy:0,hp:10,maxHp:10,inv:0,phase:0,alive:true,face:-1,timer:0},
+    boss:{x:4200,y:V2H/2,vx:0.8,vy:0,hp:8,maxHp:8,inv:0,phase:0,alive:true,face:-1,timer:0},
     runesGot:0,
     phase:'playing',// playing|win|dead
     msg:'',msgT:0,
@@ -965,7 +965,7 @@ function resetG2(){
     introT:220
   };
   // Generate enemies
-  for(let i=0;i<35;i++){
+  for(let i=0;i<18;i++){
     const ex=300+Math.random()*(V2WW-600);
     const ey=80+Math.random()*(V2H-160);
     g2.enemies.push({x:ex,y:ey,vx:(Math.random()-0.5)*1.4,vy:(Math.random()-0.5)*1.4,
@@ -989,7 +989,7 @@ function updateG2(){
   }
   g2.aPrev=K.A;
 
-  const P=g2.P,spd=2.2;
+  const P=g2.P,spd=3.8;
   if(K.L){P.vx=-spd;P.face=-1;}
   else if(K.R){P.vx=spd;P.face=1;}
   else P.vx*=0.78;
@@ -1044,8 +1044,8 @@ function updateG2(){
     if(en.dead)continue;
     if(en.inv>0)en.inv--;
     const dx=P.x-en.x,dy=P.y-en.y,d=Math.hypot(dx,dy);
-    if(d<120){en.vx+=dx/d*0.12;en.vy+=dy/d*0.12;}
-    en.vx=Math.max(-2.5,Math.min(2.5,en.vx));
+    if(d<70){en.vx+=dx/d*0.06;en.vy+=dy/d*0.06;}
+    en.vx=Math.max(-1.5,Math.min(1.5,en.vx));
     en.vy=Math.max(-2.5,Math.min(2.5,en.vy));
     en.x+=en.vx;en.y+=en.vy;
     en.x=Math.max(10,Math.min(V2WW-10,en.x));
@@ -1055,7 +1055,7 @@ function updateG2(){
     if(en.y<=20||en.y>=V2H-20)en.vy*=-1;
     // Hit player
     if(d<22&&P.inv<=0){
-      P.hp--;P.inv=90;g2.flash=15;
+      P.hp--;P.inv=140;g2.flash=15;
       if(P.hp<=0){g2.phase='dead';return;}
     }
   }
@@ -1073,7 +1073,7 @@ function updateG2(){
     B.y=Math.max(50,Math.min(V2H-50,B.y));
     if(B.vx>0)B.face=1;else if(B.vx<0)B.face=-1;
     if(d<38&&P.inv<=0){
-      P.hp--;P.inv=90;g2.flash=18;
+      P.hp--;P.inv=140;g2.flash=18;
       if(P.hp<=0){g2.phase='dead';return;}
     }
   }
