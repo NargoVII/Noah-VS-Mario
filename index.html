@@ -27,8 +27,8 @@ canvas{display:block;width:100%;max-height:calc(100% - 155px);object-fit:contain
 #b1R{bottom:calc(14px + env(safe-area-inset-bottom,0px));left:calc(max(14px,env(safe-area-inset-left,0px)) + 106px)}
 #b1A{bottom:calc(14px + env(safe-area-inset-bottom,0px));right:max(14px,env(safe-area-inset-right,0px))}
 #b2A{bottom:calc(40px + env(safe-area-inset-bottom,0px));right:max(20px,env(safe-area-inset-right,0px));width:130px;height:130px;font-size:44px}
-#g2joy{position:fixed;bottom:max(20px,env(safe-area-inset-bottom,0px));left:max(20px,env(safe-area-inset-left,0px));width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.10);border:3px solid rgba(255,255,255,.4);touch-action:none;z-index:99;display:none}
-#g2joyKnob{position:absolute;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.35);border:2px solid rgba(255,255,255,.75);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+#g2joy{position:fixed;bottom:max(20px,env(safe-area-inset-bottom,0px));left:max(20px,env(safe-area-inset-left,0px));width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.10);border:3px solid rgba(255,255,255,.4);touch-action:none;z-index:99;display:none}
+#g2joyKnob{position:absolute;width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,.35);border:2px solid rgba(255,255,255,.75);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 </style>
 
 <div id="menu">
@@ -1067,8 +1067,8 @@ function updateG2(){
     if(en.dead)continue;
     if(en.inv>0)en.inv--;
     const dx=P.x-en.x,dy=P.y-en.y,d=Math.hypot(dx,dy);
-    if(d<70){en.vx+=dx/d*0.06;en.vy+=dy/d*0.06;}
-    en.vx=Math.max(-1.5,Math.min(1.5,en.vx));
+    if(d<70){en.vx+=dx/d*0.054;en.vy+=dy/d*0.054;}
+    en.vx=Math.max(-1.35,Math.min(1.35,en.vx));
     en.vy=Math.max(-2.5,Math.min(2.5,en.vy));
     en.x+=en.vx;en.y+=en.vy;
     en.x=Math.max(10,Math.min(V2WW-10,en.x));
