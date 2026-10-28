@@ -26,11 +26,9 @@ canvas{display:block;width:100%;max-height:calc(100% - 155px);object-fit:contain
 #b1L{bottom:calc(14px + env(safe-area-inset-bottom,0px));left:max(14px,env(safe-area-inset-left,0px))}
 #b1R{bottom:calc(14px + env(safe-area-inset-bottom,0px));left:calc(max(14px,env(safe-area-inset-left,0px)) + 106px)}
 #b1A{bottom:calc(14px + env(safe-area-inset-bottom,0px));right:max(14px,env(safe-area-inset-right,0px))}
-#b2L{bottom:calc(60px + env(safe-area-inset-bottom,0px));left:max(14px,env(safe-area-inset-left,0px))}
-#b2R{bottom:calc(60px + env(safe-area-inset-bottom,0px));left:calc(max(14px,env(safe-area-inset-left,0px)) + 184px)}
-#b2U{bottom:calc(108px + env(safe-area-inset-bottom,0px));left:calc(max(14px,env(safe-area-inset-left,0px)) + 92px)}
-#b2D{bottom:calc(12px + env(safe-area-inset-bottom,0px));left:calc(max(14px,env(safe-area-inset-left,0px)) + 92px)}
-#b2A{bottom:calc(55px + env(safe-area-inset-bottom,0px));right:max(14px,env(safe-area-inset-right,0px))}
+#b2A{bottom:calc(40px + env(safe-area-inset-bottom,0px));right:max(20px,env(safe-area-inset-right,0px));width:130px;height:130px;font-size:44px}
+#g2joy{position:fixed;bottom:max(20px,env(safe-area-inset-bottom,0px));left:max(20px,env(safe-area-inset-left,0px));width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.10);border:3px solid rgba(255,255,255,.4);touch-action:none;z-index:99;display:none}
+#g2joyKnob{position:absolute;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.35);border:2px solid rgba(255,255,255,.75);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 </style>
 
 <div id="menu">
@@ -58,10 +56,7 @@ canvas{display:block;width:100%;max-height:calc(100% - 155px);object-fit:contain
 <div id="g2wrap" hidden>
   <button class="back-btn" id="g2Back">← MENU</button>
   <canvas id="c2" width="800" height="480"></canvas>
-  <button class="btn" id="b2L">◀</button>
-  <button class="btn" id="b2R">▶</button>
-  <button class="btn" id="b2U" style="font-size:26px">▲</button>
-  <button class="btn" id="b2D" style="font-size:26px">▼</button>
+  <div id="g2joy"><div id="g2joyKnob"></div></div>
   <button class="btn btn-atk" id="b2A">⚡</button>
 </div>
 
@@ -91,7 +86,35 @@ function bindBtn(id,key){
   el.addEventListener('mouseleave',()=>K[key]=0);
 }
 bindBtn('b1L','L');bindBtn('b1R','R');bindBtn('b1A','A');
-bindBtn('b2L','L');bindBtn('b2R','R');bindBtn('b2U','U');bindBtn('b2D','D');bindBtn('b2A','A');
+bindBtn('b2A','A');
+
+// Virtual joystick for Game 2
+(function(){
+  const joy=document.getElementById('g2joy');
+  const knob=document.getElementById('g2joyKnob');
+  joy.style.display='block';
+  let tid=null;
+  const DEAD=22;
+  function move(cx,cy){
+    const r=joy.getBoundingClientRect();
+    const ox=r.left+r.width/2,oy=r.top+r.height/2;
+    const dx=cx-ox,dy=cy-oy;
+    const dist=Math.hypot(dx,dy);
+    const max=r.width/2-10;
+    const ratio=Math.min(dist,max)/Math.max(dist,1);
+    knob.style.transform=`translate(calc(-50% + ${dx*ratio}px),calc(-50% + ${dy*ratio}px))`;
+    K.L=dx<-DEAD?1:0; K.R=dx>DEAD?1:0;
+    K.U=dy<-DEAD?1:0; K.D=dy>DEAD?1:0;
+  }
+  function reset(){tid=null;K.L=K.R=K.U=K.D=0;knob.style.transform='translate(-50%,-50%)';}
+  joy.addEventListener('touchstart',e=>{e.preventDefault();tid=e.changedTouches[0].identifier;move(e.changedTouches[0].clientX,e.changedTouches[0].clientY);},{passive:false});
+  joy.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===tid)move(t.clientX,t.clientY);},{passive:false});
+  joy.addEventListener('touchend',e=>{for(const t of e.changedTouches)if(t.identifier===tid)reset();},{passive:false});
+  joy.addEventListener('touchcancel',e=>{reset();},{passive:false});
+  joy.addEventListener('mousedown',e=>{tid='m';move(e.clientX,e.clientY);});
+  document.addEventListener('mousemove',e=>{if(tid==='m')move(e.clientX,e.clientY);});
+  document.addEventListener('mouseup',e=>{if(tid==='m')reset();});
+})();
 
 document.addEventListener('keydown',e=>{
   if(['ArrowLeft','a','A'].includes(e.key))K.L=1;
